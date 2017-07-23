@@ -1,0 +1,25 @@
+{
+    "name": "foodkit/jira-release-notes",
+    "description": "A release note generator package for Laravel.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Corey Mcmahon",
+            "email": "contact@coreymcmahon.com"
+        },
+        {
+            "name": "Mohammad Emran Hasan",
+            "email": "phpfour@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "FoodKit\\ReleaseNote\\": "src"
+        }
+    },
+    "require": {
+        "illuminate/console": "5.2.*",
+        "guzzlehttp/guzzle": "6.2.*"
+    }
+}
