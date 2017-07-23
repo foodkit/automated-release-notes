@@ -16,7 +16,7 @@ class Jira implements IssueTrackerInterface
 
     public function getIssueRegex()
     {
-        return '/GT-[\d]+/';
+        return $this->config['regex'];
     }
 
     public function getIssueURL($identifier)
