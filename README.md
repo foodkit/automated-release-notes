@@ -1,42 +1,31 @@
 ## Release Note Generator
 
-This is a Laravel package that generates markdown formatted release notes between two branches/tags.  
+This is a command line tool that generates markdown formatted release notes between two branches/tags.  
 
 ## Installation
 
-Install the package via composer:
+Install the package globally via composer:
 
 ``` sh
-composer require foodkit/jira-release-notes
+composer require foodkit/jira-release-notes --global
 ```
 
-Register the service provider:
+## Configuration
+
+The following configuration parameters can be passed as argument:
+
+* `--host` issue tracker host (https://project.atlassian.net)
+* `--user` issue tracker username
+* `--pass` issue tracker password
+* `--regex` issue prefix regular expression
+
+Or, they can be placed in `.env` file within a project:
 
 ```
-// config/app.php
-
-'providers' => [
-    // ...
-    FoodKit\ReleaseNote\Provider\ReleaseNoteServiceProvider::class,
-];
-
-```
-
-To publish the config file to `config/release-notes.php` run:
-
-``` sh
-php artisan vendor:publish --provider="FoodKit\ReleaseNote\Provider\ReleaseNoteServiceProvider"
-```
-
-Next add the `FoodKit\ReleaseNote\Commands\GenerateReleaseNote` class to your console kernel.
-
-```text-html-php
-// app/Console/Kernel.php
-
-protected $commands = [
-   ...
-    \FoodKit\ReleaseNote\Commands\GenerateReleaseNote::class,
-]
+JIRA_USERNAME=user
+JIRA_PASSWORD=secret
+JIRA_URL=https://ginjath.atlassian.net
+JIRA_ISSUE_REGEX=/GT-[\d]+/
 ```
 
 ## Usage
@@ -44,11 +33,11 @@ protected $commands = [
 This command will generate the release notes between two tags.
 
 ``` sh
-php artisan release-note:generate --start=v2.7.8 --end=v2.8.0
+release-notes generate --start=v2.7.8 --end=v2.8.0
 ```
 
-This  will generate the release notes between two branches.
+This will generate the release notes between two branches.
 
 ``` sh
-php artisan release-note:generate --start=develop --end=master
+release-notes generate --start=develop --end=master
 ```

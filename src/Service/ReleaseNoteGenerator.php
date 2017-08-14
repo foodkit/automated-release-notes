@@ -36,6 +36,10 @@ class ReleaseNoteGenerator
             }
         }
 
+        if (count($summaries) == 0) {
+            return 'No referenced issue found.';
+        }
+
         $notes = "# Release notes - $end\n\n";
 
         foreach ($summaries as $key => $summary) {
@@ -43,6 +47,30 @@ class ReleaseNoteGenerator
             $notes .= "* [$key]($url) - $summary\n";
         }
 
+        if ($compareUrl = $this->getCompareUrl($start, $end)) {
+            $notes .= "\n[Compare]($compareUrl)";
+        }
+
         return $notes;
+    }
+
+    private function getCompareUrl($start, $end)
+    {
+        $command = "git config --get remote.origin.url";
+        $origin = trim(shell_exec($command));
+
+        if (strpos($origin, 'github.com') !== false) {
+
+            if (strpos($origin, 'git@') !== false) {
+                $origin = str_replace('git@github.com:', 'https://github.com/', $origin);
+            }
+
+            $origin = str_replace('.git', '', $origin);
+            $compareUrl = $origin . '/compare/' . $start . '...' . $end;
+
+            return $compareUrl;
+        }
+
+        return null;
     }
 }

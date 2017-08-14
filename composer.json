@@ -13,13 +13,17 @@
             "email": "phpfour@gmail.com"
         }
     ],
+    "bin": [
+        "bin/release-notes"
+    ],
     "autoload": {
         "psr-4": {
             "FoodKit\\ReleaseNote\\": "src"
         }
     },
     "require": {
-        "illuminate/console": "5.2.*",
-        "guzzlehttp/guzzle": "6.2.*"
+        "guzzlehttp/guzzle": "6.2.*",
+        "vlucas/phpdotenv": "^2.4",
+        "symfony/console": "2.8.*|3.0.*"
     }
 }
