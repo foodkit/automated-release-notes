@@ -25,7 +25,8 @@ class GenerateReleaseNoteCommand extends Command
             ->addOption('host', null, InputOption::VALUE_OPTIONAL, 'Issue tracker host (ex: https://project.atlassian.net)')
             ->addOption('user', null, InputOption::VALUE_OPTIONAL, 'Issue tracker username')
             ->addOption('pass', null, InputOption::VALUE_OPTIONAL, 'Issue tracker password')
-            ->addOption('regex', null, InputOption::VALUE_OPTIONAL, 'Issue prefix regex');
+            ->addOption('regex', null, InputOption::VALUE_OPTIONAL, 'Issue prefix regex')
+            ->addOption('format', null, InputOption::VALUE_OPTIONAL, 'Output format (github/slack)', 'github');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -48,7 +49,7 @@ class GenerateReleaseNoteCommand extends Command
         $issueTracker = IssueTrackerFactory::create($config['type'], $config);
 
         /** @var ReleaseNoteGenerator $generator */
-        $generator = new ReleaseNoteGenerator($issueTracker);
+        $generator = new ReleaseNoteGenerator($issueTracker, $config['format']);
 
         $output->writeln($generator->generate($start, $end));
     }
@@ -60,6 +61,7 @@ class GenerateReleaseNoteCommand extends Command
 
         $config = [
             'type'     => 'jira',
+            'format'   => 'github',
             'host'     => getenv('JIRA_URL'),
             'username' => getenv('JIRA_USERNAME'),
             'password' => getenv('JIRA_PASSWORD'),
@@ -84,6 +86,10 @@ class GenerateReleaseNoteCommand extends Command
 
         if ($input->getOption('regex')) {
             $config['regex'] = $input->getOption('regex');
+        }
+
+        if ($input->getOption('format')) {
+            $config['format'] = $input->getOption('format');
         }
 
         foreach ($config as $key => $value) {

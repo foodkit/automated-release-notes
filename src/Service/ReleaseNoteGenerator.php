@@ -6,11 +6,19 @@ use FoodKit\ReleaseNote\IssueTracker\IssueTrackerInterface;
 
 class ReleaseNoteGenerator
 {
+    const FORMAT_GITHUB = 'github';
+    const FORMAT_SLACK = 'slack';
+
+    /** @var IssueTrackerInterface */
     protected $issueTracker;
 
-    public function __construct(IssueTrackerInterface $issueTracker)
+    /** @var string */
+    private $format;
+
+    public function __construct(IssueTrackerInterface $issueTracker, $format = self::FORMAT_GITHUB)
     {
         $this->issueTracker = $issueTracker;
+        $this->format = $format;
     }
 
     public function generate($start, $end)
@@ -40,18 +48,19 @@ class ReleaseNoteGenerator
             return 'No referenced issue found.';
         }
 
-        $notes = "# Release notes - $end\n\n";
+        $items = [];
 
         foreach ($summaries as $key => $summary) {
-            $url = $this->issueTracker->getIssueURL($key);
-            $notes .= "* [$key]($url) - $summary\n";
+            $items[] = [
+                'key' => $key,
+                'url' => $this->issueTracker->getIssueURL($key),
+                'summary' => $summary
+            ];
         }
 
-        if ($compareUrl = $this->getCompareUrl($start, $end)) {
-            $notes .= "\n[Compare]($compareUrl)";
-        }
+        $compareUrl = $this->getCompareUrl($start, $end);
 
-        return $notes;
+        return $this->format($end, $items, $compareUrl);
     }
 
     private function getCompareUrl($start, $end)
@@ -72,5 +81,40 @@ class ReleaseNoteGenerator
         }
 
         return null;
+    }
+
+    private function format($release, $items, $compareUrl)
+    {
+        switch ($this->format) {
+
+            case self::FORMAT_GITHUB:
+
+                $notes = "# Release notes - $release\n\n";
+
+                foreach ($items as $item) {
+                    $notes .= "* [{$item['key']}]({$item['url']}) - {$item['summary']}\n";
+                }
+
+                if (!empty($compareUrl)) {
+                    $notes .= "\n[See release commits]($compareUrl)";
+                }
+
+                return $notes;
+
+            case self::FORMAT_SLACK:
+
+                $notes = "";
+
+                foreach ($items as $item) {
+                    $notes .= "<{$item['url']}|{$item['key']}> - {$item['summary']}\n";
+                }
+
+                if (!empty($compareUrl)) {
+                    $notes .= "\n<$compareUrl|See release commits>";
+                }
+
+                return $notes;
+
+        }
     }
 }

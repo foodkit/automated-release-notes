@@ -7,7 +7,7 @@ This is a command line tool that generates markdown formatted release notes betw
 Install the package globally via composer:
 
 ``` sh
-composer require foodkit/jira-release-notes --global
+composer global require foodkit/jira-release-notes
 ```
 
 ## Configuration
@@ -18,6 +18,7 @@ The following configuration parameters can be passed as argument:
 * `--user` issue tracker username
 * `--pass` issue tracker password
 * `--regex` issue prefix regular expression
+* `--format` output format, can be either 'github' or 'slack'
 
 Or, they can be placed in `.env` file within a project:
 
