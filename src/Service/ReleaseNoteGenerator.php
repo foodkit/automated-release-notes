@@ -7,7 +7,8 @@ use FoodKit\ReleaseNote\IssueTracker\IssueTrackerInterface;
 class ReleaseNoteGenerator
 {
     const FORMAT_GITHUB = 'github';
-    const FORMAT_SLACK = 'slack';
+    const FORMAT_SLACK  = 'slack';
+    const FORMAT_JSON   = 'json';
 
     /** @var IssueTrackerInterface */
     protected $issueTracker;
@@ -60,7 +61,7 @@ class ReleaseNoteGenerator
 
         $compareUrl = $this->getCompareUrl($start, $end);
 
-        return $this->format($end, $items, $compareUrl);
+        return $this->format($this->format, $end, $items, $compareUrl);
     }
 
     private function getCompareUrl($start, $end)
@@ -83,9 +84,9 @@ class ReleaseNoteGenerator
         return null;
     }
 
-    private function format($release, $items, $compareUrl)
+    private function format($format, $release, $items, $compareUrl)
     {
-        switch ($this->format) {
+        switch ($format) {
 
             case self::FORMAT_GITHUB:
 
@@ -115,6 +116,17 @@ class ReleaseNoteGenerator
 
                 return $notes;
 
+            case self::FORMAT_JSON:
+
+                $result = [
+                    'data' => [
+                        'tag'      => $release,
+                        'issues'   => $items,
+                        'markdown' => $this->format(self::FORMAT_GITHUB, $release, $items, $compareUrl),
+                    ]
+                ];
+
+                return json_encode($result, JSON_PRETTY_PRINT);
         }
     }
 }

@@ -26,7 +26,7 @@ class GenerateReleaseNoteCommand extends Command
             ->addOption('user', null, InputOption::VALUE_OPTIONAL, 'Issue tracker username')
             ->addOption('pass', null, InputOption::VALUE_OPTIONAL, 'Issue tracker password')
             ->addOption('regex', null, InputOption::VALUE_OPTIONAL, 'Issue prefix regex')
-            ->addOption('format', null, InputOption::VALUE_OPTIONAL, 'Output format (github/slack)', 'github');
+            ->addOption('format', null, InputOption::VALUE_OPTIONAL, 'Output format (github/slack/json)', 'github');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
