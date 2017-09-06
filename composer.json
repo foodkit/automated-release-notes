@@ -3,6 +3,7 @@
     "description": "A release note generator package for Laravel.",
     "type": "library",
     "license": "MIT",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name": "Corey Mcmahon",
