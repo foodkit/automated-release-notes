@@ -1,13 +1,13 @@
 ## Release Note Generator
 
-This is a command line tool that generates markdown formatted release notes between two branches/tags.  
+This is a command line tool that generates markdown formatted release notes between two branches/tags.
 
 ## Installation
 
 Install the package globally via composer:
 
 ``` sh
-composer global require foodkit/jira-release-notes
+composer global require foodkit/automated-release-notes
 ```
 
 ## Configuration

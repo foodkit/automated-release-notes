@@ -1,5 +1,5 @@
 {
-    "name": "foodkit/jira-release-notes",
+    "name": "foodkit/automated-release-notes",
     "description": "A release note generator package for Laravel.",
     "type": "library",
     "license": "MIT",
