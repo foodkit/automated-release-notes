@@ -2,7 +2,7 @@
 
 namespace FoodKit\ReleaseNote\Service;
 
-use FoodKit\ReleaseNote\IssueTracker\IssueTrackerInterface;
+use Foodkit\ReleaseNote\IssueTracker\IssueTrackerInterface;
 
 class ReleaseNoteGenerator
 {

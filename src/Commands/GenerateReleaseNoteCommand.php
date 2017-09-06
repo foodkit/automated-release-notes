@@ -1,6 +1,6 @@
 <?php
 
-namespace FoodKit\ReleaseNote\Commands;
+namespace Foodkit\ReleaseNote\Commands;
 
 use FoodKit\ReleaseNote\IssueTrackerFactory;
 use FoodKit\ReleaseNote\Service\ReleaseNoteGenerator;

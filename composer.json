@@ -18,7 +18,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "FoodKit\\ReleaseNote\\": "src"
+            "Foodkit\\ReleaseNote\\": "src"
         }
     },
     "require": {

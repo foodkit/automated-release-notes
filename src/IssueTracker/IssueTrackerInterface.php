@@ -1,6 +1,6 @@
 <?php
 
-namespace FoodKit\ReleaseNote\IssueTracker;
+namespace Foodkit\ReleaseNote\IssueTracker;
 
 interface IssueTrackerInterface
 {
