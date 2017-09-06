@@ -2,9 +2,9 @@
 
 namespace Foodkit\ReleaseNote\Commands;
 
-use FoodKit\ReleaseNote\IssueTrackerFactory;
-use FoodKit\ReleaseNote\Service\ReleaseNoteGenerator;
-use FoodKit\ReleaseNote\IssueTracker\IssueTrackerInterface;
+use Foodkit\ReleaseNote\IssueTrackerFactory;
+use Foodkit\ReleaseNote\Service\ReleaseNoteGenerator;
+use Foodkit\ReleaseNote\IssueTracker\IssueTrackerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
