@@ -47,8 +47,15 @@ class Jira implements IssueTrackerInterface
 
         } catch (ClientException $e) {
 
-            return null;
+            if ($e->getCode() === 404) {
 
+                return null;
+
+            } else {
+
+                throw $e;
+
+            }
         }
 
         return null;
