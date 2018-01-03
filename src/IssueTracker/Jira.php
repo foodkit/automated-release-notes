@@ -31,13 +31,12 @@ class Jira implements IssueTrackerInterface
         try {
 
             $uri = $this->config['host'].'/rest/api/2/issue/'.$identifier.'?fields=summary';
+            $options['headers']['Content-Type'] = 'application/json';
+            if (!empty($this->config['username'])) {
+                $options['headers']['Authorization'] = $this->generateAuthToken();
+            }
 
-            $response = $client->get($uri, [
-                'headers' => [
-                    'Content-Type'  => 'application/json',
-                    'Authorization' => $this->generateAuthToken(),
-                ],
-            ]);
+            $response = $client->get($uri, $options);
 
             $data = json_decode($response->getBody()->getContents(), true);
 

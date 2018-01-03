@@ -92,7 +92,7 @@ class GenerateReleaseNoteCommand extends Command
             $config['format'] = $input->getOption('format');
         }
 
-        foreach ($config as $key => $value) {
+        foreach (['type', 'format', 'host', 'regex'] as $key => $value) {
             if (empty($value)) {
                 throw new RuntimeException("The required parameter '$key' is not configured.");
             }

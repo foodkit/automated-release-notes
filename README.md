@@ -29,6 +29,8 @@ JIRA_URL=https://ginjath.atlassian.net
 JIRA_ISSUE_REGEX=/GT-[\d]+/
 ```
 
+The user credential parameters can be omitted if your Jira issue api is public.
+
 ## Usage
 
 This command will generate the release notes between two tags.
