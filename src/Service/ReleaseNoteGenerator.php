@@ -3,6 +3,7 @@
 namespace FoodKit\ReleaseNote\Service;
 
 use Foodkit\ReleaseNote\IssueTracker\IssueTrackerInterface;
+use Foodkit\ReleaseNote\Parser\ParserInterface;
 
 class ReleaseNoteGenerator
 {
@@ -13,20 +14,21 @@ class ReleaseNoteGenerator
     /** @var IssueTrackerInterface */
     protected $issueTracker;
 
+    private $parser;
+
     /** @var string */
     private $format;
 
-    public function __construct(IssueTrackerInterface $issueTracker, $format = self::FORMAT_GITHUB)
+    public function __construct(IssueTrackerInterface $issueTracker, ParserInterface $parser, $format = self::FORMAT_GITHUB)
     {
         $this->issueTracker = $issueTracker;
+        $this->parser = $parser;
         $this->format = $format;
     }
 
     public function generate($start, $end)
     {
-        $command = "git log $start...$end --oneline";
-        $notes  = shell_exec($command);
-        $commits = explode(PHP_EOL, $notes);
+        $commits = $this->parser->getCommits($start, $end);
 
         $tickets = [];
         foreach ($commits as $commit) {
@@ -45,10 +47,6 @@ class ReleaseNoteGenerator
             }
         }
 
-        if (count($summaries) == 0) {
-            return 'No referenced issue found.';
-        }
-
         $items = [];
 
         foreach ($summaries as $key => $summary) {
@@ -59,29 +57,9 @@ class ReleaseNoteGenerator
             ];
         }
 
-        $compareUrl = $this->getCompareUrl($start, $end);
+        $compareUrl = $this->parser->getCompareUrl($start, $end);
 
         return $this->format($this->format, $end, $items, $compareUrl);
-    }
-
-    private function getCompareUrl($start, $end)
-    {
-        $command = "git config --get remote.origin.url";
-        $origin = trim(shell_exec($command));
-
-        if (strpos($origin, 'github.com') !== false) {
-
-            if (strpos($origin, 'git@') !== false) {
-                $origin = str_replace('git@github.com:', 'https://github.com/', $origin);
-            }
-
-            $origin = str_replace('.git', '', $origin);
-            $compareUrl = $origin . '/compare/' . $start . '...' . $end;
-
-            return $compareUrl;
-        }
-
-        return null;
     }
 
     private function format($format, $release, $items, $compareUrl)
