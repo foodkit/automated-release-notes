@@ -3,6 +3,7 @@
 namespace Foodkit\ReleaseNote\Commands;
 
 use Foodkit\ReleaseNote\IssueTrackerFactory;
+use Foodkit\ReleaseNote\ParserFactory;
 use Foodkit\ReleaseNote\Service\ReleaseNoteGenerator;
 use Foodkit\ReleaseNote\IssueTracker\IssueTrackerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -11,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Foodkit\ReleaseNote\Parser\Local;
 
 class GenerateReleaseNoteCommand extends Command
 {
@@ -26,7 +28,8 @@ class GenerateReleaseNoteCommand extends Command
             ->addOption('user', null, InputOption::VALUE_OPTIONAL, 'Issue tracker username')
             ->addOption('pass', null, InputOption::VALUE_OPTIONAL, 'Issue tracker password')
             ->addOption('regex', null, InputOption::VALUE_OPTIONAL, 'Issue prefix regex')
-            ->addOption('format', null, InputOption::VALUE_OPTIONAL, 'Output format (github/slack/json)', 'github');
+            ->addOption('format', null, InputOption::VALUE_OPTIONAL, 'Output format (github/slack/json)', 'github')
+            ->addOption('hosts', null, InputOption::VALUE_OPTIONAL, 'Custom remote git hosts and their service type(Ex github.local:github,bitbucket.local:bitbucket)', '');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -48,8 +51,9 @@ class GenerateReleaseNoteCommand extends Command
         /** @var IssueTrackerInterface $tracker */
         $issueTracker = IssueTrackerFactory::create($config['type'], $config);
 
-        /** @var ReleaseNoteGenerator $generator */
-        $generator = new ReleaseNoteGenerator($issueTracker, $config['format']);
+        $parser = ParserFactory::create('local', $config['hosts']);
+
+        $generator = new ReleaseNoteGenerator($issueTracker, $parser, $config['format']);
 
         $output->writeln($generator->generate($start, $end));
     }
@@ -66,6 +70,7 @@ class GenerateReleaseNoteCommand extends Command
             'username' => getenv('JIRA_USERNAME'),
             'password' => getenv('JIRA_PASSWORD'),
             'regex'    => getenv('JIRA_ISSUE_REGEX'),
+            'hosts'    => $this->extractHosts(getenv('GIT_CUSTOM_HOSTS'))
         ];
 
         if ($input->getOption('type')) {
@@ -92,6 +97,12 @@ class GenerateReleaseNoteCommand extends Command
             $config['format'] = $input->getOption('format');
         }
 
+        if ($input->getOption('hosts')) {
+            $config['hosts'] = $this->extractHosts($input->getOption('hosts'));
+        }
+
+
+
         foreach (['type', 'format', 'host', 'regex'] as $key => $value) {
             if (empty($value)) {
                 throw new RuntimeException("The required parameter '$key' is not configured.");
@@ -99,5 +110,29 @@ class GenerateReleaseNoteCommand extends Command
         }
 
         return $config;
+    }
+
+    /**
+     * @param array $hostsConfig
+     * @return array
+     */
+    private function extractHosts($hostsConfig)
+    {
+        $hosts = [
+            'github.com' => Local::SERVICE_TYPE_GITHUB,
+            'bitbucket.org' => Local::SERVICE_TYPE_BITBUCKET
+        ];
+
+        if(empty($hostsConfig)) {
+            return $hosts;
+        }
+
+        $hosts = explode(',', $hostsConfig);
+        foreach ($hosts as $host){
+            $hostData = explode(':', $host);
+            $hosts[$hostData[0]] = $hostData[1];
+        }
+
+        return $hosts;
     }
 }

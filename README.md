@@ -27,6 +27,7 @@ JIRA_USERNAME=user
 JIRA_PASSWORD=secret
 JIRA_URL=https://ginjath.atlassian.net
 JIRA_ISSUE_REGEX=/GT-[\d]+/
+GIT_CUSTOM_HOSTS=github.local:github,bitbucket.local:bitbucket
 ```
 
 The user credential parameters can be omitted if your Jira issue api is public.
